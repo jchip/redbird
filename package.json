@@ -62,7 +62,8 @@
     "exclude": [
       "hl-tests",
       "test",
-      "samples"
+      "samples",
+      "coverage"
     ]
   }
 }
