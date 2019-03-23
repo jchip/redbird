@@ -284,9 +284,9 @@ describe('Route resolution', function() {
       .then(function(route) {
         expect(route.path).to.be.eql('/media');
 
-        return redbird._getTarget('example.com', { url: '/foo/baz/a/b/c' });
+        return redbird._getRouteTarget('example.com', { url: '/foo/baz/a/b/c' });
       })
-      .then(function(target) {
+      .then(function({ target }) {
         expect(target.href).to.be.eql('http://192.168.1.3:8080/');
 
         redbird.close();
@@ -310,9 +310,9 @@ describe('Route resolution', function() {
       .then(function(route) {
         expect(route.path).to.be.eql('/');
 
-        return redbird._getTarget('example.com', req);
+        return redbird._getRouteTarget('example.com', req);
       })
-      .then(function(target) {
+      .then(function({ target }) {
         expect(target.href).to.be.eql('http://192.168.1.3:8080/a/b');
         expect(req.url).to.be.eql('/a/b/baz/a/b/c');
 
@@ -456,26 +456,26 @@ describe('Load balancing', function() {
 
         return Promise.each(Array(1000).fill(null), function() {
           return redbird
-            ._getTarget('example.com', { url: '/a/b/c' })
-            .then(function(target) {
+            ._getRouteTarget('example.com', { url: '/a/b/c' })
+            .then(function({ target }) {
               expect(target.href).to.be.eql('http://192.168.1.1:8080/');
               expect(redbird.routing['example.com'][0].rr).to.be.eql(1);
 
-              return redbird._getTarget('example.com', { url: '/x/y' });
+              return redbird._getRouteTarget('example.com', { url: '/x/y' });
             })
-            .then(function(target) {
+            .then(function({ target }) {
               expect(target.href).to.be.eql('http://192.168.1.2:8080/');
               expect(redbird.routing['example.com'][0].rr).to.be.eql(2);
 
-              return redbird._getTarget('example.com', { url: '/j' });
+              return redbird._getRouteTarget('example.com', { url: '/j' });
             })
-            .then(function(target) {
+            .then(function({ target }) {
               expect(target.href).to.be.eql('http://192.168.1.3:8080/');
               expect(redbird.routing['example.com'][0].rr).to.be.eql(3);
 
-              return redbird._getTarget('example.com', { url: '/k/' });
+              return redbird._getRouteTarget('example.com', { url: '/k/' });
             })
-            .then(function(target) {
+            .then(function({ target }) {
               expect(target.href).to.be.eql('http://192.168.1.4:8080/');
               expect(redbird.routing['example.com'][0].rr).to.be.eql(0);
             });

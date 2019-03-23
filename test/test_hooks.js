@@ -6,7 +6,7 @@ const electrodeServer = require('electrode-server');
 const needle = require('needle');
 const { expect } = require('chai');
 
-describe('onRequest hook', function() {
+describe('onRequest/onResponse hooks', function() {
   function setupTestRoute(handler) {
     return electrodeServer().then(server => {
       server.route({
@@ -75,6 +75,7 @@ describe('onRequest hook', function() {
     let proxyReq;
     let saveProxyHeaders;
     let target;
+    let responseTarget;
 
     return asyncVerify(
       () => {
@@ -97,6 +98,9 @@ describe('onRequest hook', function() {
             res.write('skip forward');
             res.end();
             return false;
+          },
+          onResponse: (req, res, tgt) => {
+            responseTarget = tgt;
           }
         });
         return needle('get', 'http://localhost:18999/x', {
@@ -111,6 +115,7 @@ describe('onRequest hook', function() {
         expect(saveProxyHeaders).to.exist;
         expect(saveProxyHeaders.blah).to.equal('xyz');
         expect(serverReq).to.not.exist;
+        expect(responseTarget).to.equal(false);
       },
       runFinally(() => proxy && proxy.close()),
       runFinally(() => server && server.stop())
