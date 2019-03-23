@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/* --reporter spec",
+    "coverage": "nyc mocha test/* --reporter spec",
     "lint": "eslint lib test hl-tests index.js",
     "format": "prettier --print-width=100 --single-quote --write \"{lib,test,hl-tests}/**/*.js\" \"*.js\""
   },
@@ -47,7 +48,21 @@
     "eslint-config-prettier": "^4.1.0",
     "mocha": "^3.5.3",
     "needle": "^2.2.4",
+    "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "run-verify": "^1.0.2"
+  },
+  "nyc": {
+    "all": true,
+    "reporter": [
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "exclude": [
+      "hl-tests",
+      "test",
+      "samples"
+    ]
   }
 }
