@@ -57,7 +57,7 @@
     "mocha": "^3.5.3",
     "needle": "^2.2.4",
     "nyc": "^13.3.0",
-    "prettier": "^1.16.4",
+    "prettier": "^1.19.1",
     "run-verify": "^1.0.2"
   },
   "nyc": {
@@ -73,5 +73,9 @@
       "samples",
       "coverage"
     ]
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true
   }
 }
