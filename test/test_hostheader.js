@@ -49,8 +49,7 @@ describe('Target with a hostname', function() {
     });
 
     http.get('http://127.0.0.1:' + PROXY_PORT, function(res) {
-      redbird.close();
-      done();
+      redbird.close().then(() => done(), done);
     });
   });
 
@@ -138,8 +137,7 @@ function testServer() {
     var server = http.createServer(function(req, res) {
       res.write('');
       res.end();
-      resolve(req);
-      server.close();
+      server.close(() => resolve(req));
     });
 
     server.listen(TEST_PORT);
