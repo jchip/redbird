@@ -49,7 +49,7 @@
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
-    "chai": "^1.9.1",
+    "chai": "^4.2.0",
     "electrode-server": "^2.2.2",
     "eslint": "^5.15.3",
     "eslint-config-prettier": "^4.1.0",

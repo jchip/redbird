@@ -2,8 +2,6 @@
 
 const redbird = require('..');
 const { asyncVerify, runFinally } = require('run-verify');
-const electrodeServer = require('electrode-server');
-const needle = require('needle');
 const { expect } = require('chai');
 const http = require('http');
 const https = require('https');
@@ -64,11 +62,11 @@ describe('event source', function() {
       },
       next => {
         eventRes.write('data: hello1\n\n');
-        setTimeout(next, 10);
+        setTimeout(next, 20);
       },
       next => {
         eventRes.write('data: hello2\n\n');
-        setTimeout(next, 10);
+        setTimeout(next, 20);
       },
       () => {
         expect(messages[0]).to.exist;
@@ -130,11 +128,11 @@ describe('event source', function() {
       },
       next => {
         eventRes.write('data: hello1\n\n');
-        setTimeout(next, 10);
+        setTimeout(next, 50);
       },
       next => {
         eventRes.write('data: hello2\n\n');
-        setTimeout(next, 10);
+        setTimeout(next, 50);
       },
       next => {
         expect(messages[0]).to.exist;
@@ -145,7 +143,7 @@ describe('event source', function() {
         eventSrc = null;
         messages = [];
         eventRes.write('data: hello2\n\n');
-        setTimeout(next, 10);
+        setTimeout(next, 50);
       },
       next => {
         expect(messages).to.be.empty;
@@ -156,11 +154,11 @@ describe('event source', function() {
       },
       next => {
         eventRes.write('data: hello3\n\n');
-        setTimeout(next, 10);
+        setTimeout(next, 50);
       },
       next => {
         eventRes.write('data: hello4\n\n');
-        setTimeout(next, 10);
+        setTimeout(next, 50);
       },
       () => {
         expect(messages[0]).to.exist;

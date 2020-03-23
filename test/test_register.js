@@ -341,7 +341,7 @@ describe('TLS/SSL', function() {
     redbird.register('example.com', '192.168.1.2:8080');
 
     expect(redbird.certs).to.be.an('object');
-    expect(redbird.certs['example.com']).to.be.an('object');
+    expect(redbird.certs['example.com']).to.be.a('SecureContext');
 
     redbird.unregister('example.com', '192.168.1.1:8080');
 
