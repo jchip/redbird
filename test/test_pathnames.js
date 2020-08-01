@@ -80,7 +80,33 @@ describe('Target with pathnames', function() {
       },
       next => http.get('http://127.0.0.1:' + PROXY_PORT + '/path?a=b', () => next()),
       () => server,
-      req => expect(req.url).to.be.eql('/foo/bar/qux/?a=b'),
+      req => expect(req.url).to.be.eql('/foo/bar/qux?a=b'),
+      runFinally(() => redbird.close())
+    );
+  });
+
+  it('Should not mutate URL with query params', function() {
+    let redbird;
+    let server;
+
+    return asyncVerify(
+      () => {
+        redbird = new Redbird({ ...opts, pino: { level: 'info' } });
+
+        expect(redbird.routing).to.be.an('object');
+
+        redbird.register(
+          `http://127.0.0.1:${PROXY_PORT}/path`,
+          'http://127.0.0.1:' + TEST_PORT + '/path'
+        );
+
+        expect(redbird.routing).to.have.property('127.0.0.1');
+
+        server = testServer();
+      },
+      next => http.get('http://127.0.0.1:' + PROXY_PORT + '/path?a=b', () => next()),
+      () => server,
+      req => expect(req.url).to.be.eql('/path?a=b'),
       runFinally(() => redbird.close())
     );
   });
