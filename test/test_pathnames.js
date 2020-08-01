@@ -5,6 +5,8 @@ var Promise = require('bluebird');
 var http = require('http');
 var expect = require('chai').expect;
 
+const { asyncVerify, runFinally } = require('run-verify');
+
 var TEST_PORT = 54673;
 var PROXY_PORT = 53432;
 
@@ -55,6 +57,32 @@ describe('Target with pathnames', function() {
       redbird.close();
       done();
     });
+  });
+
+  it('Should proxy URL with query params', function() {
+    let redbird;
+    let server;
+
+    return asyncVerify(
+      () => {
+        redbird = new Redbird({ ...opts, pino: { level: 'info' } });
+
+        expect(redbird.routing).to.be.an('object');
+
+        redbird.register(
+          `http://127.0.0.1:${PROXY_PORT}/path`,
+          'http://127.0.0.1:' + TEST_PORT + '/foo/bar/qux'
+        );
+
+        expect(redbird.routing).to.have.property('127.0.0.1');
+
+        server = testServer();
+      },
+      next => http.get('http://127.0.0.1:' + PROXY_PORT + '/path?a=b', () => next()),
+      () => server,
+      req => expect(req.url).to.be.eql('/foo/bar/qux/?a=b'),
+      runFinally(() => redbird.close())
+    );
   });
 });
 
