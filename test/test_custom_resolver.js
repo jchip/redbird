@@ -1,6 +1,5 @@
 'use strict';
 
-var Promise = require('bluebird');
 var Redbird = require('../');
 var expect = require('chai').expect;
 var _ = require('lodash');

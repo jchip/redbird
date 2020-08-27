@@ -1,7 +1,6 @@
 'use strict';
 
 var Redbird = require('../');
-var Promise = require('bluebird');
 var http = require('http');
 var expect = require('chai').expect;
 
