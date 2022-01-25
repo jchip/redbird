@@ -12,82 +12,85 @@ var opts = {
   bunyan: false
 };
 
+function httpGet(url) {
+  return new Promise(resolve => {
+    http
+      .get(url, res => {
+        res.data = '';
+        res.on('data', chunk => (res.data += chunk));
+        res.on('end', () => resolve(res));
+      })
+      .end();
+  });
+}
+
 describe('Target with a hostname', function() {
-  it('Should have the host header passed to the target', function(done) {
+  it('Should have the host header passed to the target', function() {
     var redbird = Redbird(opts);
 
     expect(redbird.routing).to.be.an('object');
 
-    redbird.register('127.0.0.1', '127.0.0.1.xip.io:' + TEST_PORT, {
+    redbird.register('127.0.0.1', '127.0.0.1.nip.io:' + TEST_PORT, {
       useTargetHostHeader: true
     });
 
     expect(redbird.routing).to.have.property('127.0.0.1');
 
-    testServer().then(function(req) {
-      expect(req.headers['host']).to.be.eql('127.0.0.1.xip.io:' + TEST_PORT);
-    });
-
-    http.get('http://127.0.0.1:' + PROXY_PORT, function(res) {
-      redbird.close();
-      done();
-    });
+    return Promise.all([
+      testServer().then(function(req) {
+        expect(req.headers['host']).to.be.eql('127.0.0.1.nip.io:' + TEST_PORT);
+      }),
+      httpGet('http://127.0.0.1:' + PROXY_PORT)
+    ]).then(() => redbird.close());
   });
 
-  it('Should not have the host header passed to the target', function(done) {
+  it('Should not have the host header passed to the target', function() {
     var redbird = Redbird(opts);
 
     expect(redbird.routing).to.be.an('object');
 
-    redbird.register('127.0.0.1', '127.0.0.1.xip.io:' + TEST_PORT);
+    redbird.register('127.0.0.1', '127.0.0.1.nip.io:' + TEST_PORT);
 
     expect(redbird.routing).to.have.property('127.0.0.1');
 
-    testServer().then(function(req) {
-      expect(req.headers['host']).to.be.eql('127.0.0.1:' + PROXY_PORT);
-    });
+    return Promise.all([
+      testServer().then(function(req) {
+        expect(req.headers['host']).to.be.eql('127.0.0.1:' + PROXY_PORT);
+      }),
 
-    http.get('http://127.0.0.1:' + PROXY_PORT, function(res) {
-      redbird.close().then(() => done(), done);
-    });
+      httpGet('http://127.0.0.1:' + PROXY_PORT)
+    ]).then(() => redbird.close());
   });
 
-  it('Should return 404 after route is unregister', function(done) {
+  it('Should return 404 after route is unregister', function() {
     var redbird = Redbird(opts);
 
     expect(redbird.routing).to.be.an('object');
 
-    redbird.register('127.0.0.1', '127.0.0.1.xip.io:' + TEST_PORT);
-    redbird.unregister('127.0.0.1', '127.0.0.1.xip.io:' + TEST_PORT);
+    redbird.register('127.0.0.1', '127.0.0.1.nip.io:' + TEST_PORT);
+    redbird.unregister('127.0.0.1', '127.0.0.1.nip.io:' + TEST_PORT);
 
     expect(redbird.routing).to.have.property('127.0.0.1');
 
-    testServer().then(function(req) {
-      expect(req.headers['host']).to.be.eql('127.0.0.1:' + PROXY_PORT);
-    });
-
-    http.get('http://127.0.0.1:' + PROXY_PORT, function(res) {
+    return httpGet('http://127.0.0.1:' + PROXY_PORT).then(res => {
       expect(res.statusCode).to.be.eql(404);
-
-      redbird.close();
-      done();
+      return redbird.close();
     });
   });
 
-  it('Should return 502 after route with no backend', function(done) {
+  it('Should return 502 after route with no backend', function() {
     var redbird = Redbird(opts);
 
     expect(redbird.routing).to.be.an('object');
 
-    redbird.register('127.0.0.1', '127.0.0.1.xip.io:502');
+    redbird.register('127.0.0.1', '127.0.0.1.nip.io:502');
 
     expect(redbird.routing).to.have.property('127.0.0.1');
 
-    http.get('http://127.0.0.1:' + PROXY_PORT, function(res) {
+    return httpGet('http://127.0.0.1:' + PROXY_PORT).then(res => {
       expect(res.statusCode).to.be.eql(502);
 
-      redbird.close();
-      done();
+      return redbird.close();
     });
   });
 });
@@ -134,7 +137,7 @@ describe('Request with forwarded host header', function() {
 function testServer() {
   return new Promise(function(resolve, reject) {
     var server = http.createServer(function(req, res) {
-      res.write('');
+      res.write('test-server:' + req.headers.host);
       res.end();
       server.close(() => resolve(req));
     });

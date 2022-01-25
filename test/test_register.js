@@ -341,7 +341,9 @@ describe('TLS/SSL', function() {
     redbird.register('example.com', '192.168.1.2:8080');
 
     expect(redbird.certs).to.be.an('object');
-    expect(redbird.certs['example.com']).to.be.a('SecureContext');
+
+    // this is no longer SecureContext in node.js 14+
+    // expect(redbird.certs['example.com']).to.be.a('SecureContext');
 
     redbird.unregister('example.com', '192.168.1.1:8080');
 
@@ -359,6 +361,7 @@ describe('TLS/SSL', function() {
         expect(redbird.certs['example.com']).to.be.an('undefined');
       });
   });
+
   it('Should bind https servers to different ip addresses', function(testDone) {
     var isPortTaken = function(port, ip, done) {
       var net = require('net');
