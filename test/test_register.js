@@ -61,6 +61,19 @@ describe('Route registration', function() {
     });
   });
 
+  it('should register a file as target', async () => {
+    const redbird = Redbird(opts);
+
+    redbird.register('example1.com', 'file:///a/b/c');
+
+    const target = await redbird.resolve('example1.com');
+    expect(target).to.be.an('object');
+    expect(target.urls[0].hostname).to.be.equal('');
+    expect(target.urls[0].protocol).to.be.equal('file:');
+    expect(target.urls[0].pathname).to.be.equal('/a/b/c');
+    await redbird.close();
+  });
+
   it('should register multiple routes', function() {
     var redbird = Redbird(opts);
 
