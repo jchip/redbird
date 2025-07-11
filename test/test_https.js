@@ -96,7 +96,8 @@ describe('https routing', function() {
         const dir = Path.join(__dirname, '../samples');
         proxy.register({
           src: `localhost${baseUrl}`,
-          target: `file://${dir}`
+          target: `file://${dir}`,
+          index: false
         });
 
         proxy.register({
@@ -147,10 +148,14 @@ describe('https routing', function() {
         expect(rBr.headers['content-encoding']).to.equal('br');
         expect(rBr.raw).to.deep.equal(brSample1);
 
-        const rGz = await needle('get', `${protocol}://localhost:${port}${baseUrl}/sample1.js`, {
-          headers: { 'accept-encoding': 'gzip, deflate' },
-          rejectUnauthorized: false
-        });
+        const rGz = await needle(
+          'get',
+          `${protocol}://localhost:${port}${baseUrl}/sample1.js?a=b&c=d`,
+          {
+            headers: { 'accept-encoding': 'gzip, deflate' },
+            rejectUnauthorized: false
+          }
+        );
         const gzSample1 = await fs.promises.readFile(Path.join(dir, 'sample1.js.gz'));
         expect(rGz.headers['content-encoding']).to.equal('gzip');
         expect(rGz.raw).to.deep.equal(gzSample1);
