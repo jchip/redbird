@@ -33,15 +33,15 @@
   },
   "homepage": "https://github.com/jchip/redbird",
   "dependencies": {
-    "http-proxy": "^1.17.0",
-    "lodash": "^4.17.11",
+    "http-proxy": "^1.18.1",
+    "lodash": "^4.17.21",
     "lru-cache": "^4.1.5",
     "mime": "^3.0.0",
-    "object-hash": "^1.3.1",
+    "object-hash": "^3.0.0",
     "pino": "^5.11.3",
     "pino-pretty": "^4.3.0",
     "safetimeout": "^0.1.2",
-    "spdy": "^4.0.0",
+    "spdy": "^4.0.2",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {

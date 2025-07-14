@@ -64,7 +64,7 @@ describe('Target with pathnames', function() {
 
     return asyncVerify(
       () => {
-        redbird = new Redbird({ ...opts, pino: { level: 'info' } });
+        redbird = new Redbird(Object.assign({}, opts, { pino: { level: 'info' } }));
 
         expect(redbird.routing).to.be.an('object');
 
@@ -90,7 +90,7 @@ describe('Target with pathnames', function() {
 
     return asyncVerify(
       () => {
-        redbird = new Redbird({ ...opts, pino: { level: 'info' } });
+        redbird = new Redbird(Object.assign({}, opts, { pino: { level: 'info' } }));
 
         expect(redbird.routing).to.be.an('object');
 
