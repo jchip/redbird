@@ -1,6 +1,6 @@
 {
   "name": "@jchip/redbird",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A reverse proxy with support for dynamic tables",
   "main": "index.js",
   "publishConfig": {
